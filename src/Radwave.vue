@@ -225,7 +225,6 @@
       id="video-container"
       v-model="showVideoSheet"
       transition="slide-y-transition"
-      fullscreen
     >
       <div class="video-wrapper">
         <font-awesome-icon
@@ -241,7 +240,7 @@
           controls
           id="info-video"
         >
-          <source src="" type="video/mp4">
+          <source src="./assets/ralf_crop_small.mp4" type="video/mp4">
         </video>
       </div>
     </v-dialog>
