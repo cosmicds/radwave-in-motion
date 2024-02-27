@@ -530,6 +530,10 @@ export default defineComponent({
     }
   },
   data() {
+    const search = new URLSearchParams(window.location.search);
+    const showSplashScreen = search.get("splash")?.toLowerCase() !== "false";
+    const introQuery = search.get("intro")?.toLowerCase() !== "false";
+    const userNotReady = introQuery;
     const initialOpacity = 0.2;
     const fadeStartPhase = 100;
     const fadeEndPhase = 270;
@@ -550,16 +554,19 @@ export default defineComponent({
       zoomDeg: 360,
       instant: true
     }  as GotoRADecZoomParams;
+
+    if (!showSplashScreen) {
+      this.closeSplashScreen();
+    }
     
     return {
-      showSplashScreen: true, //Action needed!! reset to true
+      showSplashScreen,
       backgroundImagesets: [] as BackgroundImageset[],
       sheet: null as SheetType,
       layersLoaded: false,
       positionSet: false,
       
-      userNotReady: true, //Action needed!! reset to true
-
+      userNotReady,
       
       accentColor: "#427cff",
       accentColor2: "#FF0000",
