@@ -48,6 +48,21 @@
             <!-- see the <span style="color: red;">Radcliffe Wave</span> <span class="color-span">oscillating</span> through our Galaxy? -->
           </p>
         </div>
+
+        <div>
+          <v-btn
+            class="splash-get-started"
+            @click="closeSplashScreen"
+            :color="accentColor"
+            :density="xSmallSize ? 'compact' : 'default'"
+            size="x-large"
+            variant="elevated"
+            rounded="lg"
+          >
+            Get Started
+          </v-btn>
+        </div>
+
         <div id="splash-screen-acknowledgements">
           Brought to you by <a href="https://www.cosmicds.cfa.harvard.edu/" target="_blank" rel="noopener noreferrer">Cosmic Data Stories</a> and <a href="https://www.worldwidetelescope.org/home/" target="_blank" rel="noopener noreferrer">WorldWide Telescope</a>.
           
@@ -687,6 +702,11 @@ export default defineComponent({
     smallSize(): boolean {
       return this.$vuetify.display.smAndDown;
     },
+
+    xSmallSize(): boolean {
+      return this.$vuetify.display.xs;
+    },
+
     mobile(): boolean {
       return this.smallSize && this.touchscreen;
     },
@@ -1257,6 +1277,20 @@ export default defineComponent({
   border: min(1.2vw, 0.9vh) solid #6facf1;
   overflow: auto;
   font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
+}
+
+.splash-get-started {
+  border: 2px solid white;
+  font-size: calc(1.8 * var(--default-font-size));
+  margin-top: 5%;
+  margin-bottom: 2%;
+  font-weight: bold !important;
+}
+
+#splash-screen-acknowledgements {
+  margin-top: 3rem;
+  font-size: .5em;
+  width: 70%; 
 }
 
 #loading-button {
