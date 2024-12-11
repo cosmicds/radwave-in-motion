@@ -35,6 +35,11 @@
         v-click-outside="closeSplashScreen"
         :style="cssVars"
       >
+        <font-awesome-icon
+          id="close-splash-button"
+          @click="closeSplashScreen"
+          icon="xmark"
+        />
         <div id="splash-screen-text">
           <p>
             Want to surf a <span 
@@ -42,11 +47,6 @@
             >giant wave</span> in the Milky Way Galaxy? 
             <!-- see the <span style="color: red;">Radcliffe Wave</span> <span class="color-span">oscillating</span> through our Galaxy? -->
           </p>
-        </div>
-        <div
-          id="close-splash-button"
-          @click="closeSplashScreen"
-          >Continue &rangle;&rangle;&rangle;
         </div>
         <div id="splash-screen-acknowledgements">
           Brought to you by <a href="https://www.cosmicds.cfa.harvard.edu/" target="_blank" rel="noopener noreferrer">Cosmic Data Stories</a> and <a href="https://www.worldwidetelescope.org/home/" target="_blank" rel="noopener noreferrer">WorldWide Telescope</a>.
@@ -1148,20 +1148,16 @@ export default defineComponent({
 //  =====================================
 
 #splash-screen #close-splash-button {
-  position: relative;
-  top: unset;
-  right: unset;
-  margin-top: 0.75em;
-  margin-bottom: 0.25em;
-  padding: 8px;
-  width: fit-content;
-  color: var(--accent-color);
-  outline: 2px solid var(--accent-color);
-  border-radius: 8px;
-  line-height: 1;
-  box-shadow: 0 0 10px 0px #ddd;
-  font-size: 0.7em;
-  text-align: center;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  text-align: end;
+  color: var(--accent-color-2);
+  font-size: min(5vw, 4vh);
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 // =====================================
@@ -1238,7 +1234,29 @@ export default defineComponent({
 }
 
 #splash-screen {
-  color: #ffffff;
+  color: #E0E0E0;
+
+  @media (max-width: 699px) {
+    max-height: 80vh;
+    max-width: 90vw;
+  }
+
+  @media (min-width: 700px) {
+    max-height: 85vh;
+    max-width: min(70vw, 800px);
+  }
+  
+  background-color: black;
+  backdrop-filter: blur(5px);
+  justify-content: space-around;
+  align-content: center;
+  padding-top: 4rem;
+  padding-bottom: 1rem;
+
+  border-radius: 30px;
+  border: min(1.2vw, 0.9vh) solid #6facf1;
+  overflow: auto;
+  font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
 }
 
 #loading-button {
