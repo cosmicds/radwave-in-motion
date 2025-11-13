@@ -1405,14 +1405,14 @@ export default defineComponent({
 
 .splash-get-started {
   border: 2px solid white;
-  font-size: calc(1.8 * var(--default-font-size));
+  font-size: calc(1.8 * var(--default-font-size)) !important;
   margin-top: 5%;
   margin-bottom: 2%;
   font-weight: bold !important;
 }
 
 #splash-screen-acknowledgements {
-  margin-top: 3rem;
+  margin-top: 2rem;
   font-size: .5em;
   width: 70%; 
 }
