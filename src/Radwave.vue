@@ -412,7 +412,7 @@
           }"
         >
           <template #footer>
-            <div id="user-experience-footer">
+            <div id="user-experience-footer" class="mt-4">
               <v-btn
                   class="rating-opt-put"
                   color="#BDBDBD"
