@@ -406,14 +406,62 @@
       </v-card>
     </v-dialog>
 
+    <v-container>
+      <v-expand-transition>
+        <user-experience
+          v-if="showRating"
+          :question="question"
+          icon-size="3x"
+          @dismiss="(_rating: UserExperienceRating | null, _comments: string | null) => {
+            showRating = false;
+          }"
+          @rating="(rating: UserExperienceRating | null) => {
+            currentRating = rating;
+            updateUserExperienceInfo(currentRating, currentComments);
+          }"
+          @finish="(rating: UserExperienceRating | null, comments: string | null) => {
+            currentRating = rating;
+            currentComments = comments;
+            updateUserExperienceInfo(currentRating, currentComments);
+            showRating = false;
+          }"
+        >
+          <template #footer>
+            <div id="user-experience-footer" class="mt-4">
+              <v-btn
+                  class="rating-opt-put"
+                  color="#BDBDBD"
+                  size="small"
+                  variant="text"
+                  @click="onOptOutClicked"
+                >
+                Don't show again
+              </v-btn>
+              <v-btn
+                class="privacy-button"
+                color="#BDBDBD"
+                href="https://www.cfa.harvard.edu/privacy-statement"
+                size="small"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+              Privacy Policy
+              </v-btn>
+            </div>
+          </template>
+        </user-experience>
+      </v-expand-transition>
+    </v-container>
+
   </div>
 </v-app>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { MiniDSBase, BackgroundImageset, skyBackgroundImagesets, D2R } from "@cosmicds/vue-toolkit";
+import { API_BASE_URL, MiniDSBase, BackgroundImageset, skyBackgroundImagesets, D2R, type UserExperienceRating } from "@cosmicds/vue-toolkit";
 import { Annotation, Color, PolyLine, SpaceTimeController, SpreadSheetLayer, WWTControl } from "@wwtelescope/engine";
+import { v4 } from "uuid";
 
 // Coordinates isn't exposed to TypeScript, but it IS exported at the JS module level,
 // so it's enough to do this. We just won't get any LSP help from an editor.
@@ -574,6 +622,10 @@ export default defineComponent({
       instant: true
     }  as GotoRADecZoomParams;
 
+    const maybeUUID = window.localStorage.getItem("cds-radwave-uuid");
+    const uuid = maybeUUID ?? v4();
+    const ratingOptedOut = window.localStorage.getItem("cds-radwave-rating-optout")?.toLowerCase() === "true";
+
     if (!showSplashScreen) {
       this.closeSplashScreen();
     }
@@ -631,9 +683,19 @@ export default defineComponent({
       previousMode: mode as "2D" | "3D" | "full" | null,
       fullwavePosition: fullwavePosition,
 
-
       minZoom: 160763995.5927744,
-      maxZoom: 22328103718.39476
+      maxZoom: 22328103718.39476,
+
+      ratingOptedOut,
+      locationErrorMessage: "",
+      showRating: false,
+      storyRatingUrl: `${API_BASE_URL}/radwave-in-motion/user-experience`,
+      uuid,
+      currentRating: null as UserExperienceRating | null,
+      currentComments: null as string | null,
+      question: Math.random() > 0.5 ?
+        "Does this spark your curiosity?" :
+        "Are you learning something new?",
     };
   },
 
@@ -670,6 +732,10 @@ export default defineComponent({
         window.requestAnimationFrame(this.onAnimationFrame);
         this.layersLoaded = true;
       });
+
+      if (!this.userNotReady) {
+        this.ratingDisplaySetup();
+      }
       
     });
     this.resizeObserver = new ResizeObserver((_entries) => {
@@ -1071,7 +1137,55 @@ export default defineComponent({
         updateSlider(phase);
       }
       window.requestAnimationFrame(this.onAnimationFrame);
-    }
+    },
+
+    async ratingDisplaySetup() {
+      if (this.ratingOptedOut) {
+        return;
+      }
+      const existsResponse = await fetch(`${this.storyRatingUrl}/${this.uuid}`, {
+        method: "GET",
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        headers: { "Authorization": process.env.VUE_APP_CDS_API_KEY ?? "" }
+      });
+      // NB: If we want to ask multiple questions, this logic can be adjusted
+      const existsContent = await existsResponse.json();
+      const exists = existsResponse.status === 200 && existsContent.ratings?.length > 0;
+      if (exists) {
+        return;
+      }
+      setTimeout(() => {
+        this.showRating = true;
+      }, 30_000);
+    },
+    updateUserExperienceInfo(rating: UserExperienceRating | null, comments: string | null) {
+      const body: Record<string, unknown> = {
+        uuid: this.uuid,
+        question: this.question,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        story_name: "radwave-in-motion",
+      };
+      if (rating) {
+        body.rating = rating;
+      }
+      if (comments) {
+        body.comments = comments;
+      }
+      fetch(this.storyRatingUrl, {
+        method: "PUT",
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          "Authorization": process.env.VUE_APP_CDS_API_KEY ?? "",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+    },
+    onOptOutClicked() {
+      this.showRating = false;
+      this.ratingOptedOut = true;
+      window.localStorage.setItem("cds-radwave-rating-optout", "true");
+    },
   },
 
   watch: {
@@ -1159,6 +1273,12 @@ export default defineComponent({
         return;
       }
       
+    },
+
+    userNotReady(value: boolean) {
+      if (!value) {
+        this.ratingDisplaySetup();
+      }
     }
     
   }
@@ -1285,14 +1405,14 @@ export default defineComponent({
 
 .splash-get-started {
   border: 2px solid white;
-  font-size: calc(1.8 * var(--default-font-size));
+  font-size: calc(1.8 * var(--default-font-size)) !important;
   margin-top: 5%;
   margin-bottom: 2%;
   font-weight: bold !important;
 }
 
 #splash-screen-acknowledgements {
-  margin-top: 3rem;
+  margin-top: 2rem;
   font-size: .5em;
   width: 70%; 
 }
@@ -1383,4 +1503,53 @@ video, #info-video {
 
 }
 
+.rating-root {
+  position: absolute !important;
+  right: 5px;
+  bottom: 0;
+  padding: 5px;
+  width: fit-content !important;
+  // left: 50%;
+  // transform: translateX(-50%);
+  gap: 0 !important;
+  border: solid 1px #EFEFEF !important;
+  border-radius: 10px !important;
+  background-color: #222222 !important;
+  opacity: 0.95 !important;
+  z-index: 20000;
+  .rating-title {
+    color: #EFEFEF;
+    font-size: var(--default-font-size);
+  }
+  .rating-icon-row {
+    
+    padding: 0px;
+    .svg-inline--fa {
+      height: 30px;
+    }
+  }
+  .comments-box {
+    width: 100%;
+    margin-top: 20px;
+  }
+  .v-card-text {
+    padding-bottom: 0;
+  }
+  .v-card-actions {
+    padding: 0;
+  }
+   #user-experience-footer {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+  }
+  .close-button {
+    position: absolute !important;
+    color: white !important;
+  }
+  .v-field--variant-filled .v-field__outline:before, .v-field--variant-underlined .v-field__outline:before, 
+  .v-field--variant-filled .v-field__outline:after, .v-field--variant-underlined .v-field__outline:after {
+    border-style: none !important;
+  }
+}
 </style>
