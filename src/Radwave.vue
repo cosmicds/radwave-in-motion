@@ -11,15 +11,6 @@
     ></WorldWideTelescope>
     
     
-    <wwt-hud
-      v-if="false"
-      :wwt-namespace="wwtNamespace"
-      :location="{top: '5rem', right: '1rem'}"
-      :offset-center="{x: 0, y: 0}"
-      :other-variables="{position3D: position3D, position2D: position2D, mode: modeReactive}"
-      text-shadow="none"
-      font-size="0.8em"
-    ></wwt-hud>
 
     <!-- This contains the splash screen content -->
 
