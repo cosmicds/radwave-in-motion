@@ -437,7 +437,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
               >
-              Privacy Policy
+              What is this?
               </v-btn>
             </div>
           </template>
