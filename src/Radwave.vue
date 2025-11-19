@@ -440,7 +440,8 @@
               <v-btn
                 class="privacy-button"
                 color="#BDBDBD"
-                href="https://www.cfa.harvard.edu/privacy-statement"
+                @click="showPrivacyPolicy = true"
+                @keyup.enter="showPrivacyPolicy = true"
                 size="small"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -451,6 +452,7 @@
           </template>
         </user-experience>
       </v-expand-transition>
+      <cds-privacy-policy v-model="showPrivacyPolicy" />
     </v-container>
 
   </div>
@@ -689,6 +691,7 @@ export default defineComponent({
       ratingOptedOut,
       locationErrorMessage: "",
       showRating: false,
+      showPrivacyPolicy: false, 
       storyRatingUrl: `${API_BASE_URL}/radwave-in-motion/user-experience`,
       uuid,
       currentRating: null as UserExperienceRating | null,

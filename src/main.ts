@@ -3,6 +3,7 @@ import "../assets/common.less";
 
 import { FundingAcknowledgment, IconButton, CreditLogos, UserExperience, wwtHUD } from "@cosmicds/vue-toolkit";
 import Radwave from "./Radwave.vue";
+import CDSPrivacyPolicy from "./CDSPrivacyPolicy.vue";
 
 import vuetify from "../plugins/vuetify";
 
@@ -63,6 +64,7 @@ createApp(Radwave, {
   .component('credit-logos', CreditLogos)
   .component('user-experience', UserExperience)
   .component('wwt-hud', wwtHUD)
+  .component('cds-privacy-policy', CDSPrivacyPolicy)
 
   // Mount
   .mount("#app");
