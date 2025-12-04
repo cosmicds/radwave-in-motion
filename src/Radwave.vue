@@ -11,15 +11,6 @@
     ></WorldWideTelescope>
     
     
-    <wwt-hud
-      v-if="false"
-      :wwt-namespace="wwtNamespace"
-      :location="{top: '5rem', right: '1rem'}"
-      :offset-center="{x: 0, y: 0}"
-      :other-variables="{position3D: position3D, position2D: position2D, mode: modeReactive}"
-      text-shadow="none"
-      font-size="0.8em"
-    ></wwt-hud>
 
     <!-- This contains the splash screen content -->
 
@@ -440,17 +431,19 @@
               <v-btn
                 class="privacy-button"
                 color="#BDBDBD"
-                href="https://www.cfa.harvard.edu/privacy-statement"
+                @click="showPrivacyPolicy = true"
+                @keyup.enter="showPrivacyPolicy = true"
                 size="small"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-              Privacy Policy
+              What is this?
               </v-btn>
             </div>
           </template>
         </user-experience>
       </v-expand-transition>
+      <cds-privacy-policy v-model="showPrivacyPolicy" />
     </v-container>
 
   </div>
@@ -689,6 +682,7 @@ export default defineComponent({
       ratingOptedOut,
       locationErrorMessage: "",
       showRating: false,
+      showPrivacyPolicy: false, 
       storyRatingUrl: `${API_BASE_URL}/radwave-in-motion/user-experience`,
       uuid,
       currentRating: null as UserExperienceRating | null,
