@@ -727,9 +727,9 @@ export default defineComponent({
         this.layersLoaded = true;
       });
 
-      if (!this.userNotReady) {
-        this.ratingDisplaySetup();
-      }
+      // if (!this.userNotReady) {
+      //   this.ratingDisplaySetup();
+      // }
       
     });
     this.resizeObserver = new ResizeObserver((_entries) => {
@@ -1152,6 +1152,7 @@ export default defineComponent({
         this.showRating = true;
       }, 30_000);
     },
+
     updateUserExperienceInfo(rating: UserExperienceRating | null, comments: string | null) {
       const body: Record<string, unknown> = {
         uuid: this.uuid,
@@ -1269,11 +1270,11 @@ export default defineComponent({
       
     },
 
-    userNotReady(value: boolean) {
-      if (!value) {
-        this.ratingDisplaySetup();
-      }
-    }
+    // userNotReady(value: boolean) {
+    //   if (!value) {
+    //     this.ratingDisplaySetup();
+    //   }
+    // }
     
   }
 });
